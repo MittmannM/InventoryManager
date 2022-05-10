@@ -1,0 +1,12 @@
+{% extends "invmanager/base.html" %}
+
+{% block content %}
+    <hi1>{{ 'Alle Employees: '}}</hi1>
+    <ul>
+        {% for item in employees %}
+
+                <li>{{ item.last_name }} {{ item.first_name }} {{ item.company }}</li>
+
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "invmanager/base.html" %}
+
+{% block content %}
+    <hi1>{{ 'Alle Listenitems: '}}</hi1>
+    <ul>
+        {% for item in list %}
+            {% if item.name != null %}
+                <li>{{ item.name }}</li>
+            {% else %}
+
+                <li>{{ item.uuid }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}
+
