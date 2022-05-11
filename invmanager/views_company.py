@@ -97,6 +97,8 @@ def show_single_employee_by_name(request, name):
     employee = Employee.objects.exclude(last_name__contains=name)
     print(employee)
     return render(request, "invmanager/employee.html", {'employees': employee})
+
+
 @login_required
 def show_all_appointments(request):
 
