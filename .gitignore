@@ -1,0 +1,4 @@
+venv
+/Scripts/
+/Lib/
+db.sqlite3
