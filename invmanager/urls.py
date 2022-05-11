@@ -17,6 +17,7 @@ urlpatterns = [
         path('', views_company.show_company, name='show_company'),
         # path('account', name='show_account'),
         path('employees', views_company.show_all_employees, name='show_all_employees'),
+        path('employee_<name>', views_company.show_single_employee_by_name, name='show_single_employee_by_name'),
         path('inventories', views_company.show_all_inventory, name='show_all_inventories'),
         path('inventory_<inventory_uuid>', views_company.show_single_inventory, name='show_single_inventory'),
         path('machinery', views_company.show_all_machinery, name='show_all_machinery'),

@@ -1,4 +1,4 @@
-import requests
+
 from itertools import chain
 
 from django.shortcuts import (

@@ -143,8 +143,8 @@ class Employee(models.Model):
     modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
-    last_name = models.CharField('First name', max_length=150, blank=False, null=False)
-    first_name = models.CharField('Last name', max_length=150, blank=False, null=False)
+    last_name = models.CharField('Last name', max_length=150, blank=False, null=False)
+    first_name = models.CharField('First name', max_length=150, blank=False, null=False)
     email = models.EmailField('E-Mail', max_length=150, blank=True)
     company = models.ForeignKey('Company', Company, blank=False, null=False)
     is_active = models.BooleanField(default=True)
