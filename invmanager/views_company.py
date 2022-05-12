@@ -56,7 +56,7 @@ def show_single_inventory(request, inventory_uuid):
 def show_all_inventory(request):
     # TODO Zugriffsrechte einbauen
     # TODO wie bekommt man die Company
-    inventory = Inventory.objects.filter()
+    inventory = Inventory.objects.all()
 
     return render(request, "invmanager/list.html", {'list': inventory})
 
@@ -65,7 +65,7 @@ def show_all_inventory(request):
 def show_all_machinery(request):
     # TODO Zugriffsrechte einbauen
     # TODO wie bekommt man die Company
-    machinery = Machinery.objects.filter()
+    machinery = Machinery.objects.all()
 
     return render(request, "invmanager/list.html", {'list': machinery})
 
@@ -85,23 +85,41 @@ def show_single_machinery(request, machinery_uuid):
 @login_required
 def show_all_employees(request):
     # TODO wie bekommt man die Company
-    employees = Employee.objects.order_by('-last_name')
+    employees = Employee.objects.all().order_by('-last_name')
 
     return render(request, "invmanager/employee.html", {'employees': employees, })
 
 
 @login_required
-def show_single_employee_by_name(request, name):
+def show_all_employees_by_name(request, name):
     # TODO WIe bekommt man die Company
 
     employee = Employee.objects.exclude(last_name__contains=name)
-    print(employee)
+
     return render(request, "invmanager/employee.html", {'employees': employee})
 
 
 @login_required
-def show_all_appointments(request):
+def show_single_employee_by_uuid(request, uuid):
+    try:
+        employee = Employee.objects.filter(uuid=uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        # TODO not registered namespace invmanager
+        return HttpResponseRedirect((reverse('invmanager:company')))
+    return render(request, "invmanager/employee.html", {'employees': employee, })
 
+
+@login_required
+def show_all_employees_by_machine(request, machinery_uuid):
+
+    employees = Employee.objects.filter(machinery__uuid=machinery_uuid)
+    print(employees)
+
+    return render(request, "invmanager/employee.html", {'employees': employees})
+
+
+@login_required
+def show_all_appointments(request):
     # TODO fix next_date to be able to order correct
     appointments1 = Inspection.objects.exclude().order_by('last_inspection_date')
     appointments2 = Maintenance.objects.exclude().order_by('last_maintenance_date')

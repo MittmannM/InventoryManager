@@ -45,7 +45,7 @@ def show_employee(request):
 def show_all_machinery(request):
     try:
         # TODO get employee
-        machinery = Machinery.objects.filter()
+        machinery = Machinery.objects.all()
     except (ValidationError):
         # TODO not registered namespace invmanager
         return HttpResponseRedirect((reverse('invmanager:company')))
