@@ -111,11 +111,23 @@ def show_single_employee_by_uuid(request, uuid):
 
 @login_required
 def show_all_employees_by_machine(request, machinery_uuid):
-
-    employees = Employee.objects.filter(machinery__uuid=machinery_uuid)
-    print(employees)
-
+    try:
+        employees = Employee.objects.filter(machinery__uuid=machinery_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        # TODO not registered namespace invmanager
+        return HttpResponseRedirect((reverse('invmanager:company')))
     return render(request, "invmanager/employee.html", {'employees': employees})
+
+
+@login_required
+def show_all_machinery_by_employee(request, employee_uuid):
+
+    try:
+        machinery = Machinery.objects.filter(employee__uuid=employee_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        #TODO not registered namespace invmanager
+        return HttpResponseRedirect((reverse('invmanager:company')))
+    return render(request, "invmanager/list.html", {'list': machinery})
 
 
 @login_required
@@ -127,4 +139,4 @@ def show_all_appointments(request):
 
     return render(request, "invmanager/list.html", {'list': appointments, })
 
-# TODO new functions for employee search maybe for appointment search
+# TODO new functions for appointment search

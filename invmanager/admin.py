@@ -14,10 +14,10 @@ from invmanager.models import (
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
+        'name',
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+
     )
 
 
@@ -26,8 +26,9 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'first_name',
+        'last_name',
+
 
     )
 
@@ -37,8 +38,9 @@ class InventoryAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'name',
+        'product_number',
+        'quantity',
 
     )
 
@@ -48,8 +50,8 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'city',
+        'street',
 
     )
 
@@ -59,8 +61,7 @@ class MachineryTypeAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'type',
 
     )
 
@@ -70,26 +71,32 @@ class MachineryAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'name',
+        'machinery_number',
+        'location',
+        'company',
 
     )
+
 
 @admin.register(Inspection)
 class InspectionAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'last_inspection_date',
+        'inspection_interval',
         'next_inspection_date'
     )
+
 
 @admin.register(Maintenance)
 class MaintenanceAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'uuid',
-        'create_datetime',
-        'modified_datetime',
+        'last_maintenance_date',
+        'maintenance_interval',
+        'next_maintenance_date',
+
     )
