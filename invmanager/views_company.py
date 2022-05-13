@@ -47,8 +47,7 @@ def show_single_inventory(request, inventory_uuid):
     try:
         inventory = Inventory.objects.get(uuid=inventory_uuid)
     except (ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': inventory})
 
 
@@ -77,8 +76,7 @@ def show_single_machinery(request, machinery_uuid):
     try:
         machinery = Machinery.objects.get(uuid=machinery_uuid)
     except (ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': machinery, })
 
 
@@ -104,8 +102,7 @@ def show_single_employee_by_uuid(request, uuid):
     try:
         employee = Employee.objects.filter(uuid=uuid)
     except(ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employee, })
 
 
@@ -114,8 +111,7 @@ def show_all_employees_by_machine(request, machinery_uuid):
     try:
         employees = Employee.objects.filter(machinery__uuid=machinery_uuid)
     except(ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employees})
 
 
@@ -125,8 +121,7 @@ def show_all_machinery_by_employee(request, employee_uuid):
     try:
         machinery = Machinery.objects.filter(employee__uuid=employee_uuid)
     except(ObjectDoesNotExist, ValidationError):
-        #TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': machinery})
 
 

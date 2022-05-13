@@ -35,3 +35,6 @@ def show_home(request):
 
 def show_abo(request):
     return render(request, "invmanager/abo.html")
+
+def no_object_exists(request):
+    return render(request, "invmanager/no_object.html")

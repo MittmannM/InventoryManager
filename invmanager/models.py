@@ -23,6 +23,9 @@ class Location(models.Model):
     city = models.CharField('City', max_length=150, blank=False)
     country = models.CharField('Country', max_length=150, blank=True)
 
+    def __str__(self):
+        return self.city + '/' + self.country + ' [' + str(self.id) + ']'
+
 
 class MachineryType(models.Model):
     create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
@@ -30,6 +33,9 @@ class MachineryType(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
     type = models.CharField('Type', max_length=150)
+
+    def __str__(self):
+        return self.type
 
 
 class Company(models.Model):
@@ -119,7 +125,7 @@ class Machinery(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
     name = models.CharField('Name', max_length=150, null=False, blank=True)
-    machinery_number = models.IntegerField('Number', null=False, blank=False)
+    machinery_number = models.IntegerField('machinery_number', null=False, blank=False)
     machinery_type = models.ForeignKey(MachineryType, null=True, blank=False, on_delete=models.SET_NULL)
 
     date_of_installation = models.DateField('Date of installation', null=False, blank=True)

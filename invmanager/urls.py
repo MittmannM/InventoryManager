@@ -36,4 +36,6 @@ urlpatterns = [
         path('appointments', views_employee.show_all_appointments, name='show_appointments')
     ])),
 
+    path('no_object', views.no_object_exists, name='no_object_exists')
+
 ]

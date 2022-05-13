@@ -43,13 +43,9 @@ def show_employee(request):
 #hallo
 @login_required
 def show_all_machinery(request):
-    try:
-        # TODO get employee
-        machinery = Machinery.objects.all()
-    except (ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
 
+    # TODO get employee
+    machinery = Machinery.objects.all()
     return render(request, "invmanager/list.html", {'list': machinery})
 
 @login_required
@@ -59,8 +55,7 @@ def show_single_machinery(request, machinery_uuid):
     try:
         machinery = Machinery.objects.get(uuid=machinery_uuid)
     except (ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': machinery, })
 
 
@@ -74,6 +69,7 @@ def show_all_appointments(request):
         appointments = list(chain(appointments1, appointments2))
 
     except (ObjectDoesNotExist, ValidationError):
-        # TODO not registered namespace invmanager
-        return HttpResponseRedirect((reverse('invmanager:company')))
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': appointments, })
+
+#TODO show single appointment + by_uuid + by_date + by_month + by_year
