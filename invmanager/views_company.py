@@ -112,7 +112,7 @@ def show_all_employees_by_machine(request, company_uuid, machinery_uuid):
     try:
         employees = Employee.objects.filter(company__uuid=company_uuid,
                                             machinery__uuid=machinery_uuid)
-    except(ObjectDoesNotExist, ValidationError):
+    except ValidationError:
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employees})
 
@@ -122,7 +122,7 @@ def show_all_machinery_by_employee(request, company_uuid, employee_uuid):
     try:
         machinery = Machinery.objects.filter(company__uuid=company_uuid,
                                              employee__uuid=employee_uuid)
-    except(ObjectDoesNotExist, ValidationError):
+    except ValidationError:
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': machinery})
 
