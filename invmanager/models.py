@@ -125,7 +125,7 @@ class Machinery(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
     name = models.CharField('Name', max_length=150, null=False, blank=True)
-    machinery_number = models.IntegerField('machinery_number', null=False, blank=False)
+    machinery_number = models.IntegerField('Machinery number', null=False, blank=False)
     machinery_type = models.ForeignKey(MachineryType, null=True, blank=False, on_delete=models.SET_NULL)
 
     date_of_installation = models.DateField('Date of installation', null=False, blank=True)
@@ -152,9 +152,9 @@ class Employee(models.Model):
     last_name = models.CharField('Last name', max_length=150, blank=False, null=False)
     first_name = models.CharField('First name', max_length=150, blank=False, null=False)
     email = models.EmailField('E-Mail', max_length=150, blank=True)
-    company = models.ForeignKey('Company', Company, blank=False, null=False)
     is_active = models.BooleanField(default=True)
 
+    company = models.ForeignKey('Company', Company, blank=False, null=False)
     machinery = models.ManyToManyField(Machinery, blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)

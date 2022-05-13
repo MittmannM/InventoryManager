@@ -35,28 +35,29 @@ from django.core.exceptions import (
 
 
 @login_required
-def show_company(request):
-    # TODO wie bekommt man die Company
-    return render(request, "invmanager/company.html")
+def show_company(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+    except (ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+    return render(request, "invmanager/company.html", {'company': company})
 
 
 @login_required
-def show_single_inventory(request, inventory_uuid):
+def show_single_inventory(request, company_uuid, inventory_uuid):
     # TODO Zugriffsrechte einbauen
-    # TODO wie bekommt man die Company
     try:
-        inventory = Inventory.objects.get(uuid=inventory_uuid)
+        inventory = Inventory.objects.get(company__uuid=company_uuid,
+                                          uuid=inventory_uuid)
     except (ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': inventory})
 
 
 @login_required
-def show_all_inventory(request):
+def show_all_inventory(request, company_uuid):
     # TODO Zugriffsrechte einbauen
-    # TODO wie bekommt man die Company
-    inventory = Inventory.objects.all()
-
+    inventory = Inventory.objects.filter(company__uuid=company_uuid).order_by('name', 'quantity')
     return render(request, "invmanager/list.html", {'list': inventory})
 
 
@@ -81,45 +82,46 @@ def show_single_machinery(request, machinery_uuid):
 
 
 @login_required
-def show_all_employees(request):
-    # TODO wie bekommt man die Company
-    employees = Employee.objects.all().order_by('-last_name')
+def show_all_employees(request, company_uuid):
+    employees = Employee.objects.filter(company__uuid=company_uuid).order_by('-last_name')
 
     return render(request, "invmanager/employee.html", {'employees': employees, })
 
 
 @login_required
-def show_all_employees_by_name(request, name):
-    # TODO WIe bekommt man die Company
-
-    employee = Employee.objects.exclude(last_name__contains=name)
+def show_all_employees_by_name(request, company_uuid, name):
+    employee = Employee.objects \
+        .filter(company__uuid=company_uuid,
+                last_name=name)
 
     return render(request, "invmanager/employee.html", {'employees': employee})
 
 
 @login_required
-def show_single_employee_by_uuid(request, uuid):
+def show_single_employee_by_uuid(request, company_uuid, uuid):
     try:
-        employee = Employee.objects.filter(uuid=uuid)
+        employee = Employee.objects.filter(company__uuid=company_uuid,
+                                           uuid=uuid)
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employee, })
 
 
 @login_required
-def show_all_employees_by_machine(request, machinery_uuid):
+def show_all_employees_by_machine(request, company_uuid, machinery_uuid):
     try:
-        employees = Employee.objects.filter(machinery__uuid=machinery_uuid)
+        employees = Employee.objects.filter(company__uuid=company_uuid,
+                                            machinery__uuid=machinery_uuid)
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employees})
 
 
 @login_required
-def show_all_machinery_by_employee(request, employee_uuid):
-
+def show_all_machinery_by_employee(request, company_uuid, employee_uuid):
     try:
-        machinery = Machinery.objects.filter(employee__uuid=employee_uuid)
+        machinery = Machinery.objects.filter(company__uuid=company_uuid,
+                                             employee__uuid=employee_uuid)
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': machinery})

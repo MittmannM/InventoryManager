@@ -13,7 +13,7 @@ urlpatterns = [
     path('abo', views.show_abo, name='show_subscription'),
 
     # TODO Maybe <company> ?
-    path('company/', include([
+    path('<company_uuid>/', include([
         path('', views_company.show_company, name='show_company'),
         # path('account', name='show_account'),
         path('employees', views_company.show_all_employees, name='show_all_employees'),
