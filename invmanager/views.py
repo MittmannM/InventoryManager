@@ -3,14 +3,13 @@ from django.shortcuts import (
     redirect
     )
 from .models import (
+Appointment,
 Company,
 Employee,
-Inspection,
-Inventory,
 Location,
-Machinery,
-MachineryType,
-Maintenance,
+Gadget,
+GadgetType,
+
 )
 from django.http import (
     HttpResponse,

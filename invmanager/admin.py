@@ -1,13 +1,11 @@
 from django.contrib import admin
 from invmanager.models import (
+    Appointment,
     Company,
     Employee,
-    Inspection,
-    Inventory,
     Location,
-    MachineryType,
-    Machinery,
-    Maintenance,
+    Gadget,
+    GadgetType,
 )
 
 
@@ -33,18 +31,6 @@ class EmployeeAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Inventory)
-class InventoryAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'product_number',
-        'quantity',
-        'company',
-        'id',
-        'uuid',
-    )
-
-
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = (
@@ -56,8 +42,8 @@ class LocationAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(MachineryType)
-class MachineryTypeAdmin(admin.ModelAdmin):
+@admin.register(GadgetType)
+class GadgetTypeAdmin(admin.ModelAdmin):
     list_display = (
         'type',
         'id',
@@ -65,12 +51,12 @@ class MachineryTypeAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Machinery)
-class MachineryAdmin(admin.ModelAdmin):
+@admin.register(Gadget)
+class GadgetAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'machinery_number',
-        'machinery_type',
+        'number',
+        'type',
         'location',
         'company',
         'id',
@@ -78,23 +64,12 @@ class MachineryAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Inspection)
-class InspectionAdmin(admin.ModelAdmin):
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
     list_display = (
-        'last_inspection_date',
-        'inspection_interval',
-        'next_inspection_date',
-        'id',
-        'uuid',
-    )
-
-
-@admin.register(Maintenance)
-class MaintenanceAdmin(admin.ModelAdmin):
-    list_display = (
-        'last_maintenance_date',
-        'maintenance_interval',
-        'next_maintenance_date',
-        'id',
+        'type',
+        'interval',
+        'last_appointment',
+        'next_appointment',
         'uuid',
     )

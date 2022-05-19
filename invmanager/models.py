@@ -6,9 +6,9 @@ from graphviz import *
 from django.contrib.auth.models import User
 
 APPOINTMENT_CHOICE = (
-    ("Maintenance"),
-    ("Inspection"),
-    ("Replacement")
+    ("MAIN", "Maintenance"),
+    ("INS", "Inspection"),
+    ("REPL", "Replacement")
 )
 
 
@@ -27,7 +27,7 @@ class Location(models.Model):
         return self.city + '/' + self.country + ' [' + str(self.id) + ']'
 
 
-class MachineryType(models.Model):
+class GadgetType(models.Model):
     create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
     modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
@@ -47,7 +47,7 @@ class Company(models.Model):
     email = models.EmailField('E-Mail', max_length=150, blank=True)
     location = models.ManyToManyField(Location)
     is_craft_enterprise = models.BooleanField(default=False, blank=False, null=False)
-    type = models.ManyToManyField(MachineryType, blank=True)
+    type = models.ManyToManyField(GadgetType, blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
@@ -55,84 +55,39 @@ class Company(models.Model):
         return self.name + ' [' + str(self.id) + ']'
 
 
-class Inventory(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
-
-    name = models.CharField('Name', max_length=150, blank=False, null=False)
-    product_number = models.CharField('Product number', max_length=100, blank=False, null=False, unique=False)
-    quantity = models.IntegerField('Quantity', blank=False, null=False, default=1)
-    description = HTMLField('Description', max_length=500, blank=True)
-    company = models.ForeignKey('Company', Company, blank=False, null=False)
-
-
-class Inspection(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
-
-    inspection_interval = models.IntegerField('Inspection interval', null=False, blank=True)
-    last_inspection_date = models.DateField('Last inspection', null=False, blank=True)
-    next_inspection_date = None
-
-    additional_information = models.TextField('Additional information', blank=True)
-
-    def calc_inspection_date(self):
-        self.next_inspection_date = self.last_inspection_date.day + self.inspection_interval * 7
-
-
-"""
 class Appointment(models.Model):
     create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
     modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
-    appointment_type = models.CharField(choices=APPOINTMENT_CHOICE)
+    type = models.CharField('Type', choices=APPOINTMENT_CHOICE, max_length=500)
 
     #replacement/maintenance/inspection
-    appointment_interval = models.IntegerField('Maintenance interval', null=False, blank=True)
-    last_appointment = models.DateField('Last maintenance', null=False, blank=True)
+    interval = models.IntegerField('Interval', null=False, blank=True)
+    last_appointment = models.DateField('Last appointment', null=False, blank=True)
     next_appointment = None
 
     additional_information = models.TextField('Additional information', blank=True)
 
     def save(self, *args, **kwargs):
-        self.next_appointment = self.appointment_interval * 7
+        self.next_appointment = self.interval * 7
 
-        super(Inspection, self).save(*args, **kwargs)
- """
-
-
-class Maintenance(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
-
-    maintenance_interval = models.IntegerField('Maintenance interval', null=False, blank=True)
-    last_maintenance_date = models.DateField('Last maintenance', null=False, blank=True)
-    next_maintenance_date = None
-
-    additional_information = models.TextField('Additional information', blank=True)
-
-    def calc_maintenance_date(self):
-        self.next_maintenance_date = self.last_maintenance_date.day + self.maintenance_interval * 7
+        super(Appointment, self).save(*args, **kwargs)
 
 
-class Machinery(models.Model):
+class Gadget(models.Model):
     create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
     modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
     uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
 
     name = models.CharField('Name', max_length=150, null=False, blank=True)
-    machinery_number = models.IntegerField('Machinery number', null=False, blank=False)
-    machinery_type = models.ForeignKey(MachineryType, null=True, blank=False, on_delete=models.SET_NULL)
+    number = models.IntegerField('Machinery number', null=False, blank=False)
+    type = models.ForeignKey(GadgetType, null=True, blank=False, on_delete=models.SET_NULL)
+    image = models.ImageField('Image', height_field=None, width_field=None, max_length=100, null=True, blank=True)
 
     date_of_installation = models.DateField('Date of installation', null=False, blank=True)
 
-    inspection = models.ForeignKey('Inspection', Inspection, blank=False, null=False)
-
-    maintenance = models.ForeignKey('Maintenance', Maintenance, blank=False, null=False)
+    appointments = models.ManyToManyField(Appointment, blank=True)
 
     replacement_interval = models.IntegerField('Replacement time', null=False, blank=True)
     replacement_date = None
@@ -155,7 +110,7 @@ class Employee(models.Model):
     is_active = models.BooleanField(default=True)
 
     company = models.ForeignKey('Company', Company, blank=False, null=False)
-    machinery = models.ManyToManyField(Machinery, blank=True)
+    gadget = models.ManyToManyField(Gadget, blank=True)
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
@@ -164,38 +119,3 @@ class Employee(models.Model):
         )
 
 
-"""
-    class Craft_Enterprise(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-
-    uuid = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, verbose_name='Public Identifier')
-
-    name = models.CharField(max_length=500, blank=False, null=False, unique=True)
-    email = models.EmailField('E-Mail', max_length=500, blank=True)
-    strasse = models.CharField('Strasse', max_length=500, blank=True)
-    hausnummer = models.CharField('Hausnummer', max_length=500, blank=True)
-    plz = models.CharField('Postleitzahl', max_length=500, blank=True)
-    stadt = models.CharField('Stadt', max_length=500, blank=False)
-    land = models.CharField('Land', max_length=500, blank=True)
-
-    def __str__(self):
-        return self.name + ' [' + str(self.id) + ']'
-"""
-"""
-class CompanyLocations(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-
-    company = models.ForeignKey('Company', Company, blank=False, null=False) #TODO Many to Many
-    location = models.ForeignKey('Location', Location, blank=False, null=False)
-"""
-
-"""
-class ResponsibleDevices(models.Model):
-    create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
-    modified_datetime = models.DateTimeField('Last changes', null=True, blank=True, auto_now=True)
-
-    employee = models.ForeignKey('Employee', Employee, blank=False, null=False)    #TODO Many to Many
-    machinery = models.ForeignKey('Machinery', Machinery, blank=False, null=False)
-"""
