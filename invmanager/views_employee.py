@@ -35,31 +35,37 @@ from django.core.exceptions import (
 
 @login_required
 def show_employee(request, employee_uuid):
-    user = request.user
-    if user != employee_uuid:
-        return render(request, "invmanager/access.html")
     try:
         employee = Employee.objects.get(uuid=employee_uuid)
-    except (ObjectDoesNotExist):
+        user = request.user
+        if user != employee.user:
+            return render(request, "invmanager/access.html")
+        employee = Employee.objects.get(uuid=employee_uuid)
+    except (ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': employee})
 
 
 @login_required
 def show_all_gadgets(request, employee_uuid):
-    user = request.user
-    if user != employee_uuid:
-        return render(request, "invmanager/access.html")
-    gadgets = Gadget.objects.filter(employee__uuid=employee_uuid)
+    try:
+        employee = Employee.objects.get(uuid=employee_uuid)
+        user = request.user
+        if user != employee.user:
+            return render(request, "invmanager/access.html")
+        gadgets = Gadget.objects.filter(employee__uuid=employee_uuid)
+    except (ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': gadgets})
 
 
 @login_required
 def show_single_gadget(request, gadget_uuid, employee_uuid):
-    user = request.user
-    if user != employee_uuid:
-        return render(request, "invmanager/access.html")
     try:
+        employee = Employee.objects.get(uuid=employee_uuid)
+        user = request.user
+        if user != employee.user:
+            return render(request, "invmanager/access.html")
         gadget = Gadget.objects.get(uuid=gadget_uuid,
                                     employee__uuid=employee_uuid)
     except (ObjectDoesNotExist, ValidationError):
@@ -69,18 +75,24 @@ def show_single_gadget(request, gadget_uuid, employee_uuid):
 
 @login_required
 def show_all_appointments(request, employee_uuid):
-    # TODO Zugriffsrechte einbauen
-    appointments = Appointment.objects.filter(gadget__employee__uuid=employee_uuid)
-
-        # TODO fix next_date to be able to order correct
-
+    try:
+        employee = Employee.objects.get(uuid=employee_uuid)
+        user = request.user
+        if user != employee.user:
+            return render(request, "invmanager/access.html")
+        appointments = Appointment.objects.filter(gadget__employee__uuid=employee_uuid) # TODO fix next_date to be able to order correct
+    except (ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': appointments,})
 
 
 @login_required
 def show_single_appointment(request, employee_uuid, appointment_uuid):
-    # TODO only user can see
     try:
+        employee = Employee.objects.get(uuid=employee_uuid)
+        user = request.user
+        if user != employee.user:
+            return render(request, "invmanager/access.html")
         appointment = Appointment.objects.get(gadget__employee__uuid=employee_uuid,
                                               uuid=appointment_uuid)
     except(ObjectDoesNotExist, ValidationError):
