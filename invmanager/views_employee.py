@@ -35,24 +35,30 @@ from django.core.exceptions import (
 
 @login_required
 def show_employee(request, employee_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != employee_uuid:
+        return render(request, "invmanager/access.html")
     try:
         employee = Employee.objects.get(uuid=employee_uuid)
-    except (ObjectDoesNotExist, ValidationError):
+    except (ObjectDoesNotExist):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': employee})
 
 
 @login_required
 def show_all_gadgets(request, employee_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != employee_uuid:
+        return render(request, "invmanager/access.html")
     gadgets = Gadget.objects.filter(employee__uuid=employee_uuid)
     return render(request, "invmanager/list.html", {'list': gadgets})
 
 
 @login_required
 def show_single_gadget(request, gadget_uuid, employee_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != employee_uuid:
+        return render(request, "invmanager/access.html")
     try:
         gadget = Gadget.objects.get(uuid=gadget_uuid,
                                     employee__uuid=employee_uuid)

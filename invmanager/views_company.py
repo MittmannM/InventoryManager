@@ -20,6 +20,9 @@ from django.http import (
     HttpResponseRedirect
 )
 
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Permission, User
+
 from django.core.paginator import Paginator
 
 from django.contrib.auth.decorators import login_required
@@ -35,7 +38,10 @@ from django.core.exceptions import (
 
 @login_required
 def show_company(request, company_uuid):
-    #TODO Zugriffsrechte einbauen
+    user = get_object_or_404(User, pk=company_uuid) #TODO User umschreiben wie bei AOBricks core? ->
+                                                    # aktuell uuid mit id vergleich
+    if user.pk != company_uuid:
+        return render(request, "invmanager/access.html")
     try:
         company = Company.objects.get(uuid=company_uuid)
     except (ObjectDoesNotExist, ValidationError):
@@ -45,7 +51,9 @@ def show_company(request, company_uuid):
 
 @login_required
 def show_all_gadgets(request, company_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
     gadgets = Gadget.objects.filter(company__uuid=company_uuid)
 
     return render(request, "invmanager/list.html", {'list': gadgets})
@@ -53,7 +61,9 @@ def show_all_gadgets(request, company_uuid):
 
 @login_required
 def show_single_gadget(request, company_uuid, gadget_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
     try:
         gadget = Gadget.objects.get(company__uuid=company_uuid, uuid=gadget_uuid)
     except (ObjectDoesNotExist, ValidationError):
@@ -63,16 +73,21 @@ def show_single_gadget(request, company_uuid, gadget_uuid):
 
 @login_required
 def show_all_employees(request, company_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
     employees = Employee.objects.filter(company__uuid=company_uuid)\
-                                .order_by('-last_name')
+                                    .order_by('-last_name')
 
     return render(request, "invmanager/employee.html", {'employees': employees, })
 
 
+
 @login_required
 def show_single_employee_by_uuid(request, company_uuid, employee_uuid):
-    # TODO Zugriffsrechte einbauen
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
     try:
         employee = Employee.objects.filter(company__uuid=company_uuid,
                                            uuid=employee_uuid)
@@ -83,22 +98,22 @@ def show_single_employee_by_uuid(request, company_uuid, employee_uuid):
 
 @login_required
 def show_all_employees_by_gadget(request, company_uuid, gadget_uuid):
-    try:
-        employees = Employee.objects.filter(company__uuid=company_uuid,
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
+
+    employees = Employee.objects.filter(company__uuid=company_uuid,
                                             gadget__uuid=gadget_uuid)
-    except ValidationError:
-        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employees})
 
 
 @login_required
 def show_all_gadgets_by_employee(request, company_uuid, employee_uuid):
-    # TODO Zugriffsrechte einbauen
-    try:
-        gadgets = Gadget.objects.filter(company__uuid=company_uuid,
+    user = request.user
+    if user != company_uuid:
+        return render(request, "invmanager/access.html")
+    gadgets = Gadget.objects.filter(company__uuid=company_uuid,
                                         employee__uuid=employee_uuid)
-    except ValidationError:
-        return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': gadgets})
 
 

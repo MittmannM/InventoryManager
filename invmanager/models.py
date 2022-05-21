@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.conf import settings
 import uuid
@@ -96,7 +98,7 @@ class Gadget(models.Model):
     company = models.ForeignKey('Company', Company, blank=False, null=False)
 
     def calc_replacement_date(self):
-        self.replacement_date = self.date_of_installation.day + self.replacement_interval * 7
+        return self.date_of_installation.day + self.replacement_interval * 7
 
 
 class Employee(models.Model):
