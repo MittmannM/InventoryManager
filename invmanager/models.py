@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime, time, date, timedelta
+import time
 
 from django.db import models
 from django.conf import settings
@@ -67,14 +68,17 @@ class Appointment(models.Model):
     #replacement/maintenance/inspection
     interval = models.IntegerField('Interval', null=False, blank=True)
     last_appointment = models.DateField('Last appointment', null=False, blank=True)
-    next_appointment = None
+    next_appointment = models.DateField('Next appointment', null=True, blank=True)
 
     additional_information = models.TextField('Additional information', blank=True)
 
     def save(self, *args, **kwargs):
-        self.next_appointment = self.interval * 7
-
+        self.compute_next_appointment()
         super(Appointment, self).save(*args, **kwargs)
+
+    def compute_next_appointment(self, *args, **kwargs):
+        self.full_clean()
+        self.next_appointment = self.last_appointment + timedelta(weeks=self.interval)
 
 
 class Gadget(models.Model):

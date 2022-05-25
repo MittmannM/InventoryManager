@@ -139,8 +139,7 @@ def show_all_appointments(request, company_uuid):
         user = request.user
         if user != company.user:
             return render(request, "invmanager/access.html")
-    # TODO fix next_date to be able to order correct
-        appointments = Appointment.objects.filter(gadget__company__uuid=company_uuid)
+        appointments = Appointment.objects.filter(gadget__company__uuid=company_uuid).order_by("next_appointment")
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': appointments})
@@ -148,7 +147,6 @@ def show_all_appointments(request, company_uuid):
 
 @login_required
 def show_single_appointment(request, company_uuid, appointment_uuid):
-    # TODO fix next_date to be able to order correct
     try:
         company = Company.objects.get(uuid=company_uuid)
         user = request.user

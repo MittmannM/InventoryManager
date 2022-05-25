@@ -80,7 +80,7 @@ def show_all_appointments(request, employee_uuid):
         user = request.user
         if user != employee.user:
             return render(request, "invmanager/access.html")
-        appointments = Appointment.objects.filter(gadget__employee__uuid=employee_uuid) # TODO fix next_date to be able to order correct
+        appointments = Appointment.objects.filter(gadget__employee__uuid=employee_uuid).order_by("next_appointment")
     except (ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/list.html", {'list': appointments,})
