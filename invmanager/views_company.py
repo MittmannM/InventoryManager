@@ -1,4 +1,5 @@
 from itertools import chain
+from .forms import AddEmployee
 
 import requests
 from django.shortcuts import (
@@ -157,3 +158,9 @@ def show_single_appointment(request, company_uuid, appointment_uuid):
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/unit.html", {'unit': appointment})
+
+
+@login_required
+def add_employee(request, company_uuid):
+    form = AddEmployee()
+    return render(request, "invmanager/add_employee.html", {"form": form})

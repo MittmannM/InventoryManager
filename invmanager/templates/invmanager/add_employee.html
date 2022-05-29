@@ -1,0 +1,11 @@
+{% extends 'invmanager/base.html' %}
+
+{%  block title %} Create New Employee {% endblock %}
+
+{%  block content %}
+    Create Page
+    <form method="post", action="invmanager/add_employee.html"></form>
+        {{form}}
+    <button type="submit", name="save">Create New</button>
+        </form>
+{% endblock %}
