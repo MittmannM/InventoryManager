@@ -4,8 +4,9 @@
 
 {%  block content %}
     Create Page
-    <form method="post", action="invmanager/add_employee.html"></form>
-        {{form}}
-    <button type="submit", name="save">Create New</button>
-        </form>
+    <form method="post" action="{% url "add_employee" %}">
+        {%  csrf_token %}
+        {{form.as_p}}
+        <button type="submit" name="save">Create New</button>
+    </form>
 {% endblock %}

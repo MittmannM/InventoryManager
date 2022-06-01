@@ -1,5 +1,5 @@
 from itertools import chain
-from .forms import AddEmployee
+from .forms import AddEmployee, AddGadget, AddGadgetType, AddLocation, AddAppointment
 
 import requests
 from django.shortcuts import (
@@ -83,8 +83,8 @@ def show_all_employees(request, company_uuid):
         user = request.user
         if user != company.user:
             return render(request, "invmanager/access.html")
-        employees = Employee.objects.filter(company__uuid=company_uuid)\
-                                    .order_by('-last_name')
+        employees = Employee.objects.filter(company__uuid=company_uuid) \
+            .order_by('-last_name')
     except (ObjectDoesNotExist, ValidationError):
         return HttpResponseRedirect('no_object')
     return render(request, "invmanager/employee.html", {'employees': employees, })
@@ -162,5 +162,87 @@ def show_single_appointment(request, company_uuid, appointment_uuid):
 
 @login_required
 def add_employee(request, company_uuid):
-    form = AddEmployee()
+    if request.method == "POST":
+        form = AddEmployee(request.POST)
+
+        if form.is_valid():
+            fn = form.cleaned_data["first_name"]
+            ln = form.cleaned_data["last_name"]
+            e = form.cleaned_data["email"]
+            t = Employee(first_name=fn, last_name=ln, email=e)
+            t.save()
+            return HttpResponseRedirect("/%i" % t.id)
+    else:
+        form = AddEmployee()
     return render(request, "invmanager/add_employee.html", {"form": form})
+
+
+@login_required
+def add_gadget(request, company_uuid):
+    if request.method == "POST":
+        form = AddGadget(request.POST)
+
+        if form.is_valid():
+            n = form.cleaned_data["name"]
+            num = form.cleaned_data["number"]
+            image = form.cleaned_data["image"]
+            insdate = form.cleaned_data["installation_date"]
+            t = Gadget(name=n,number=num,image=image,date_of_installation=insdate)
+            t.save()
+            return HttpResponseRedirect("/%i" % t.id)
+    else:
+        form = AddGadget()
+    return render(request, "invmanager/add_gadget.html", {"form": form})
+
+
+@login_required
+def add_appointment(request, company_uuid):
+    if request.method == "POST":
+        form = AddAppointment(request.POST)
+
+        if form.is_valid():
+            type = form.cleaned_data["type"]
+            interval = form.cleaned_data["interval"]
+            la = form.cleaned_data["last_appointment"]
+            na = form.cleaned_data["next_appointment"]
+            ai = form.cleaned_data["additional_information"]
+            t = Appointment(type=type,interval = interval,last_appointment=la,next_appointment=na,additional_information=ai)
+            t.save()
+            return HttpResponseRedirect("/%i" % t.id)
+    else:
+        form = AddAppointment()
+    return render(request, "invmanager/add_appointment.html", {"form": form})
+
+
+@login_required
+def add_location(request, company_uuid):
+    if request.method == "POST":
+        form = AddLocation(request.POST)
+
+        if form.is_valid():
+            str = form.cleaned_data["street"]
+            hn = form.cleaned_data["house_number"]
+            pc = form.cleaned_data["postal_code"]
+            city = form.cleaned_data["city"]
+            country = form.cleaned_data["country"]
+            t = Location(street=str,house_number=hn,postal_code=pc,city=city,country=country)
+            t.save()
+            return HttpResponseRedirect("/%i" % t.id)
+    else:
+        form = AddLocation()
+    return render(request, "invmanager/add_location.html", {"form": form})
+
+
+@login_required
+def add_gadget_type(request, company_uuid):
+    if request.method == "POST":
+        form = AddGadgetType(request.POST)
+
+        if form.is_valid():
+            type = form.cleaned_data["type"]
+            t = GadgetType(type=type)
+            t.save()
+            return HttpResponseRedirect("/%i" % t.id)
+    else:
+        form = AddGadgetType()
+    return render(request, "invmanager/add_gadget_type.html", {"form": form})
