@@ -22,7 +22,9 @@ urlpatterns = [
         path('gadgets_<employee_uuid>/employees', views_company.show_all_gadgets_by_employee, name='show_all_gadgets_by_employee'),
         path('com_appointments', views_company.show_all_appointments, name='show_all_appointments'),
         path('com_appointments/<appointment_uuid>', views_company.show_single_appointment, name='show_single_appointment'),
-        path('add/', views_company.add_employee, name='add_employee')
+        path('add_employee', views_company.add_employee, name='add_employee'),
+        path('add_gadgettype', views_company.add_gadget_type, name='add_gadgettype'),
+        path('add_location', views_company.add_location, name='add_location')
     ])),
 
     path('<employee_uuid>/', include([

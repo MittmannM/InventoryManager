@@ -1,10 +1,12 @@
 from itertools import chain
-from .forms import AddEmployee, AddGadget, AddGadgetType, AddLocation, AddAppointment
+from .forms import EmployeeForm, GadgetTypeForm, GadgetForm, LocationForm, AppointmentForm
+
 
 import requests
 from django.shortcuts import (
     render,
-    redirect
+    redirect,
+    resolve_url
 )
 
 from .models import (
@@ -162,18 +164,26 @@ def show_single_appointment(request, company_uuid, appointment_uuid):
 
 @login_required
 def add_employee(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+
     if request.method == "POST":
-        form = AddEmployee(request.POST)
+        form = EmployeeForm(request.POST)
 
         if form.is_valid():
-            fn = form.cleaned_data["first_name"]
-            ln = form.cleaned_data["last_name"]
-            e = form.cleaned_data["email"]
-            t = Employee(first_name=fn, last_name=ln, email=e)
-            t.save()
-            return HttpResponseRedirect("/%i" % t.id)
+            form.save(commit=False)
+            form.company = company.id
+            form.save()
+            return HttpResponseRedirect("/%i" % form.id)
     else:
-        form = AddEmployee()
+        print("bruh")
+        form = EmployeeForm()
     return render(request, "invmanager/add_employee.html", {"form": form})
 
 
@@ -217,32 +227,32 @@ def add_appointment(request, company_uuid):
 @login_required
 def add_location(request, company_uuid):
     if request.method == "POST":
-        form = AddLocation(request.POST)
+        form = LocationForm(request.POST)
 
         if form.is_valid():
-            str = form.cleaned_data["street"]
-            hn = form.cleaned_data["house_number"]
-            pc = form.cleaned_data["postal_code"]
-            city = form.cleaned_data["city"]
-            country = form.cleaned_data["country"]
-            t = Location(street=str,house_number=hn,postal_code=pc,city=city,country=country)
-            t.save()
-            return HttpResponseRedirect("/%i" % t.id)
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/add_location"))
     else:
-        form = AddLocation()
+        form = LocationForm()
     return render(request, "invmanager/add_location.html", {"form": form})
 
 
 @login_required
 def add_gadget_type(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     if request.method == "POST":
-        form = AddGadgetType(request.POST)
+        form = GadgetTypeForm(request.POST)
 
         if form.is_valid():
-            type = form.cleaned_data["type"]
-            t = GadgetType(type=type)
-            t.save()
-            return HttpResponseRedirect("/%i" % t.id)
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/add_gadgettype"))
     else:
-        form = AddGadgetType()
+        form = GadgetTypeForm()
     return render(request, "invmanager/add_gadget_type.html", {"form": form})
