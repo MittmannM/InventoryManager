@@ -24,7 +24,15 @@ urlpatterns = [
         path('com_appointments/<appointment_uuid>', views_company.show_single_appointment, name='show_single_appointment'),
         path('add_employee', views_company.add_employee, name='add_employee'),
         path('add_gadgettype', views_company.add_gadget_type, name='add_gadgettype'),
-        path('add_location', views_company.add_location, name='add_location')
+        path('add_location', views_company.add_location, name='add_location'),
+        path('add_appointment', views_company.add_appointment, name='add_appointment'),
+        path('add_gadget', views_company.add_gadget, name='add_gadget'),
+        path('update_gagdget_type/<gadgettype_uuid>', views_company.update_gadget_type, name='update_gadget_type'),
+        path('update_gadget/<gadget_uuid>', views_company.update_gadget, name='update_gadget'),
+        path('update_appointment/<appointment_uuid>', views_company.update_appointment, name='update_appointment'),
+        path('update_location/<location_uuid>', views_company.update_location, name='update_location'),
+        path('update_employee/<employee_uuid>', views_company.update_employee, name='update_employee'),
+        path('delete_employee/<employee_uuid>', views_company.delete_employee, name='delete_employee'),
     ])),
 
     path('<employee_uuid>/', include([
@@ -34,6 +42,14 @@ urlpatterns = [
         path('machinery_<gadget_uuid>', views_employee.show_single_gadget, name='show_single_machine'),
         path('emp_appointments', views_employee.show_all_appointments, name='show_all_appointments'),
         path('emp_appointments/<appointment_uuid>', views_employee.show_single_appointment, name='show_single_appointment'),
+        path('addGadgetType', views_employee.create_gadget_type, name='add_gadgettype'),
+        path('addLocation', views_employee.create_location, name='add_location'),
+        path('addAppointment', views_employee.create_appointment, name='add_appointment'),
+        path('addGadget', views_employee.create_gadget, name='add_gadget'),
+        path('updateGadgetType/<gadgettype_uuid>', views_employee.update_gadget_type, name='update_gadget_type'),
+        path('updateGadget/<gadget_uuid>', views_employee.update_gadget, name='update_gadget'),
+        path('updateLocation/<location_uuid>', views_employee.update_location, name='update_location'),
+        path('updateAppointment/<appointment_uuid>', views_employee.update_appointment, name='update_appointment'),
     ])),
 
     path('no_object', views.no_object_exists, name='no_object_exists'),

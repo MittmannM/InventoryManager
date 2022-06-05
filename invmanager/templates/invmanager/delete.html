@@ -1,0 +1,12 @@
+{% extends 'invmanager/base.html' %}
+
+{%  block content %}
+    <p>Are you sure you want to delete "{{ item }}</p>
+    <form action={% url  'delete_employee' company.uuid item.uuid %}method="post">
+
+        {%  csrf_token %}
+        <a href="{%  url 'home' %}">Cancel</a>
+
+        <input type="submit" name="Delete">
+    </form>
+{% endblock %}

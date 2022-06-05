@@ -1,0 +1,12 @@
+{% extends 'invmanager/base.html' %}
+
+{%  block title %} Create New Appointment {% endblock %}
+
+{%  block content %}
+    Create Page
+    <form method="post" action="">
+        {%  csrf_token %}
+        {{form.as_p}}
+        <button type="submit" name="save">Create New</button>
+    </form>
+{% endblock %}

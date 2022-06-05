@@ -189,43 +189,56 @@ def add_employee(request, company_uuid):
 
 @login_required
 def add_gadget(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     if request.method == "POST":
-        form = AddGadget(request.POST)
+        form = GadgetForm(request.POST)
 
         if form.is_valid():
-            n = form.cleaned_data["name"]
-            num = form.cleaned_data["number"]
-            image = form.cleaned_data["image"]
-            insdate = form.cleaned_data["installation_date"]
-            t = Gadget(name=n,number=num,image=image,date_of_installation=insdate)
-            t.save()
-            return HttpResponseRedirect("/%i" % t.id)
+            form.save(commit=False)
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/add_gadget"))
     else:
-        form = AddGadget()
+        form = GadgetForm
     return render(request, "invmanager/add_gadget.html", {"form": form})
 
 
 @login_required
 def add_appointment(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     if request.method == "POST":
-        form = AddAppointment(request.POST)
+        form = AppointmentForm(request.POST)
 
         if form.is_valid():
-            type = form.cleaned_data["type"]
-            interval = form.cleaned_data["interval"]
-            la = form.cleaned_data["last_appointment"]
-            na = form.cleaned_data["next_appointment"]
-            ai = form.cleaned_data["additional_information"]
-            t = Appointment(type=type,interval = interval,last_appointment=la,next_appointment=na,additional_information=ai)
-            t.save()
-            return HttpResponseRedirect("/%i" % t.id)
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/add_appointment"))
     else:
-        form = AddAppointment()
+        form = AppointmentForm()
     return render(request, "invmanager/add_appointment.html", {"form": form})
 
 
 @login_required
 def add_location(request, company_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
     if request.method == "POST":
         form = LocationForm(request.POST)
 
@@ -256,3 +269,123 @@ def add_gadget_type(request, company_uuid):
     else:
         form = GadgetTypeForm()
     return render(request, "invmanager/add_gadget_type.html", {"form": form})
+
+
+@login_required
+def update_gadget_type(request, company_uuid, gadgettype_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        gadget_type = GadgetType.objects.get(uuid=gadgettype_uuid) #TODO Sicherheitslücke
+        form = GadgetTypeForm(instance=gadget_type)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+
+    if request.method == 'POST':
+        form = GadgetTypeForm(request.POST, instance=gadget_type)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/addGadgetType"))
+    return render(request, 'invmanager/add_gadget_type.html', {"form": form})
+
+
+@login_required
+def update_gadget(request, company_uuid, gadget_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        gadget = Gadget.objects.get(uuid=gadget_uuid)
+        if gadget.company != company:
+            return HttpResponse('this gadget could not be found within your company')
+        form = GadgetForm(instance=gadget)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+
+    if request.method == 'POST':
+        form = GadgetForm(request.POST, instance=gadget)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/addGadget"))
+    return render(request, 'invmanager/add_gadget.html', {"form": form})
+
+
+@login_required
+def update_location(request, company_uuid, location_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        location = Location.objects.get(uuid=location_uuid) #TODO Sicherheitslücke
+        form = LocationForm(instance=location)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+
+    if request.method == 'POST':
+        form = LocationForm(request.POST, instance=location)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/addLocation"))
+    return render(request, 'invmanager/add_location.html', {"form": form})
+
+
+@login_required
+def update_appointment(request, company_uuid, appointment_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        appointment = Appointment.objects.get(uuid=appointment_uuid) #TODO Sicherheitslücke
+        form = AppointmentForm(instance=appointment)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/addAppointment"))
+    return render(request, 'invmanager/add_appointment.html', {"form": form})
+
+
+@login_required
+def update_employee(request, company_uuid, employee_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        employee = Employee.objects.get(uuid=employee_uuid) #TODO Sicherheitslücke
+        form = AppointmentForm(instance=employee)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponseRedirect('no_object')
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, instance=employee)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(resolve_url("http://127.0.0.1:8000/" + company_uuid + "/addEmployee"))
+    return render(request, 'invmanager/add_employee.html', {"form": form})
+
+
+@login_required
+def delete_employee(request, company_uuid, employee_uuid):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        print("geht noch")
+        employee = Employee.objects.get(uuid=employee_uuid)
+        print("auch noch")
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponse('no_object')
+    if request.method == "POST":
+        employee.delete()
+        return HttpResponse("invmanager/home.html")
+    return render(request, 'invmanager/delete.html', {'item': employee,
+                                                      'company': company})
