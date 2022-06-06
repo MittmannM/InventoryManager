@@ -373,19 +373,91 @@ def update_employee(request, company_uuid, employee_uuid):
 
 
 @login_required
-def delete_employee(request, company_uuid, employee_uuid):
+def delete_employee(request, employee_uuid, company_uuid,):
     try:
         company = Company.objects.get(uuid=company_uuid)
         user = request.user
         if user != company.user:
             return render(request, "invmanager/access.html")
-        print("geht noch")
         employee = Employee.objects.get(uuid=employee_uuid)
-        print("auch noch")
     except(ObjectDoesNotExist, ValidationError):
         return HttpResponse('no_object')
+
     if request.method == "POST":
+
         employee.delete()
         return HttpResponse("invmanager/home.html")
     return render(request, 'invmanager/delete.html', {'item': employee,
+                                                      'company': company})
+
+
+@login_required
+def delete_location(request, location_uuid, company_uuid, ):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        location = Location.objects.get(uuid=location_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponse('no_object')
+
+    if request.method == "POST":
+        location.delete()
+        return HttpResponse("invmanager/home.html")
+    return render(request, 'invmanager/delete.html', {'item': location,
+                                                      'company': company})
+
+
+@login_required
+def delete_gadget(request, gadget_uuid, company_uuid, ):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        gadget = Gadget.objects.get(uuid=gadget_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponse('no_object')
+
+    if request.method == "POST":
+        gadget.delete()
+        return HttpResponse("invmanager/home.html")
+    return render(request, 'invmanager/delete.html', {'item': gadget,
+                                                      'company': company})
+
+
+@login_required
+def delete_gadget_type(request, gadgettype_uuid, company_uuid, ):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        gadget_type = GadgetType.objects.get(uuid=gadgettype_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponse('no_object')
+
+    if request.method == "POST":
+        gadget_type.delete()
+        return HttpResponse("invmanager/home.html")
+    return render(request, 'invmanager/delete.html', {'item': gadget_type,
+                                                      'company': company})
+
+
+@login_required
+def delete_appointment(request, appointment_uuid, company_uuid, ):
+    try:
+        company = Company.objects.get(uuid=company_uuid)
+        user = request.user
+        if user != company.user:
+            return render(request, "invmanager/access.html")
+        appointment = Appointment.objects.get(uuid=appointment_uuid)
+    except(ObjectDoesNotExist, ValidationError):
+        return HttpResponse('no_object')
+
+    if request.method == "POST":
+        appointment.delete()
+        return HttpResponse("invmanager/home.html")
+    return render(request, 'invmanager/delete.html', {'item': appointment,
                                                       'company': company})

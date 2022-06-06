@@ -33,6 +33,10 @@ urlpatterns = [
         path('update_location/<location_uuid>', views_company.update_location, name='update_location'),
         path('update_employee/<employee_uuid>', views_company.update_employee, name='update_employee'),
         path('delete_employee/<employee_uuid>', views_company.delete_employee, name='delete_employee'),
+        path('delete_appointment/<appointment_uuid>', views_company.delete_appointment, name='delete_appointment'),
+        path('delete_location/<location_uuid>', views_company.delete_location, name='delete_location'),
+        path('delete_gadget/<gadget_uuid>', views_company.delete_gadget, name='delete_gadget'),
+        path('delete_gadget_type/<gadgettype_uuid>', views_company.delete_gadget_type, name='delete_gadget_type'),
     ])),
 
     path('<employee_uuid>/', include([
@@ -50,6 +54,10 @@ urlpatterns = [
         path('updateGadget/<gadget_uuid>', views_employee.update_gadget, name='update_gadget'),
         path('updateLocation/<location_uuid>', views_employee.update_location, name='update_location'),
         path('updateAppointment/<appointment_uuid>', views_employee.update_appointment, name='update_appointment'),
+        path('deleteAppointment/<appointment_uuid>', views_employee.delete_appointment, name='deleteAppointment'),
+        path('deleteLocation/<location_uuid>', views_employee.delete_location, name='deleteLocation'),
+        path('deleteGadget/<gadget_uuid>', views_employee.delete_gadget, name='deleteGadget'),
+        path('deleteGadgetType/<gadgettype_uuid>', views_employee.delete_gadget_type, name='deleteGadgetType'),
     ])),
 
     path('no_object', views.no_object_exists, name='no_object_exists'),

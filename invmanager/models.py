@@ -27,7 +27,7 @@ class Location(models.Model):
     country = models.CharField('Country', max_length=150, blank=True)
 
     def __str__(self):
-        return self.city + '/' + self.country + ' [' + str(self.id) + ']'
+        return self.city + ' ' + self.country
 
 
 class GadgetType(models.Model):
@@ -55,7 +55,7 @@ class Company(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.name + ' [' + str(self.id) + ']'
+        return self.name
 
 
 class Appointment(models.Model):
@@ -79,6 +79,9 @@ class Appointment(models.Model):
     def compute_next_appointment(self, *args, **kwargs):
         self.full_clean()
         self.next_appointment = self.last_appointment + timedelta(weeks=self.interval)
+
+    def __str__(self):
+        return self.type + ' ' + str(self.last_appointment) + ' ' + str(self.interval)
 
 
 class Gadget(models.Model):
@@ -104,6 +107,9 @@ class Gadget(models.Model):
     def calc_replacement_date(self):
         return self.date_of_installation.day + self.replacement_interval * 7
 
+    def __str__(self):
+        return self.name + ' ' + str(self.number) + ' ' + str(self.type)
+
 
 class Employee(models.Model):
     create_datetime = models.DateTimeField('Creation date', auto_now_add=True, null=True)
@@ -123,5 +129,8 @@ class Employee(models.Model):
     class Meta:
         permissions = (
         )
+
+    def __str__(self):
+        return self.last_name + ' ' + self.first_name + ' ' + str(self.company)
 
 
